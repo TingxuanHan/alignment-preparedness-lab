@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "status": "draft_not_executed",
+  "question": "Safety SFT/DPO generalization and utility tradeoffs",
+  "models": {
+    "primary": {"id": "Qwen/Qwen3-8B", "revision": null},
+    "replication": {"id": "Qwen/Qwen3-32B", "revision": null}
+  },
+  "data": {
+    "id": "PKU-Alignment/PKU-SafeRLHF",
+    "revision": null,
+    "split_manifest_sha256": null,
+    "initial_pair_count_range": [2000, 5000],
+    "preference_axis": "safety",
+    "drop_unsafe_chosen": true,
+    "split_unit": "prompt_family"
+  },
+  "common": {
+    "enable_thinking": false,
+    "dtype": "bfloat16",
+    "max_length": 2048,
+    "debug_max_length": 512,
+    "per_device_train_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "gradient_checkpointing": true,
+    "num_train_epochs": 1,
+    "seeds": [17, 29, 43]
+  },
+  "lora": {
+    "r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj"]
+  },
+  "arms": [
+    {"id": "8b_base", "method": "none", "model": "primary"},
+    {"id": "8b_sft", "method": "sft", "model": "primary", "learning_rate": 0.0001, "init": "primary_original"},
+    {"id": "8b_dpo", "method": "dpo", "model": "primary", "learning_rate": 0.000005, "beta": 0.1, "init": "primary_original", "reference": "primary_original_frozen"}
+  ],
+  "evaluation": {
+    "benchmarks": ["HarmBench", "XSTest", "IFEval"],
+    "subset_manifest_sha256": null,
+    "judge_revision": null,
+    "max_new_tokens": 512,
+    "attack_budget_per_target": 10,
+    "manual_audit_required": true,
+    "report_errors_separately": true
+  },
+  "ablation": "normal_task_data_mixture",
+  "replication_selection": "development_set_only",
+  "optional_extension": "AgentDojo, separate task and attack denominators"
+}

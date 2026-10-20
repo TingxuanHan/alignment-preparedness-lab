@@ -1,0 +1,9 @@
+# Candidate stack. GPU execution must be verified on the target server.
+# Install torch using the explicit official CUDA index in bootstrap.sh first.
+torch==2.8.0
+transformers==4.57.1
+trl==0.24.0
+peft==0.17.1
+datasets==4.3.0
+accelerate==1.11.0
+huggingface-hub==0.35.3
